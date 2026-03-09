@@ -150,15 +150,14 @@ input {
 }
 
 .avatar {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.35), rgba(99, 102, 241, 0.25));
+  object-fit: cover;
   border: 1px solid rgba(255,255,255,0.15);
-  font-weight: 700;
+  display: block;
+  flex-shrink: 0;
+  background: transparent;
 }
 
 .brother-meta {
@@ -276,6 +275,22 @@ input {
   text-align: center;
   color: #a1a1aa;
   background: rgba(255,255,255,0.02);
+}
+
+@media (max-width: 960px) {
+  .hero-panel,
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .posts {
+    height: 600px;
+  }
+
+  .stats {
+    min-width: 0;
+  }
 }
 
 @media (max-width: 960px) {
