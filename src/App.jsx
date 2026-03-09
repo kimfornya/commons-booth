@@ -2,21 +2,19 @@ import React, { useEffect, useMemo, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import "./App.css";
 
-/* Supabase connection */
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
 
-/* Brothers list */
 const brothers = [
-  { id: "babcd851-523e-4079-aecb-9bcdc92d3524", slug: "dom", name: "Dom" },
-  { id: "57ff07c1-eeb7-4aef-a1bd-a5b937006c23", slug: "jesse", name: "Jesse" },
-  { id: "a4a96b38-a531-4b9c-abe7-d7e1214088b9", slug: "barry", name: "Barry" },
-  { id: "a3c3126c-91e4-4da1-88dc-e4ae9d250e1f", slug: "patrick", name: "Patrick" },
-  { id: "5ea4a6d8-a69d-4640-8740-c960522aa11b", slug: "daryl", name: "Daryl" },
-  { id: "15002c77-077a-4c9d-974f-9575ed0af7da", slug: "colin", name: "Colin" },
-  { id: "acb72650-5217-4129-892e-8ed09453b4ee", slug: "kim", name: "Kim" }
+  { id: "UUID_DOM", name: "Dom" },
+  { id: "UUID_JESSE", name: "Jesse" },
+  { id: "UUID_BARRY", name: "Barry" },
+  { id: "UUID_PATRICK", name: "Patrick" },
+  { id: "UUID_DARYL", name: "Daryl" },
+  { id: "UUID_COLIN", name: "Colin" },
+  { id: "UUID_KIM", name: "Kim" },
 ];
 
 function getBrother(id) {
@@ -74,7 +72,6 @@ export default function App() {
   const [selectedBrother, setSelectedBrother] = useState("all");
   const [lastUpdated, setLastUpdated] = useState(new Date());
 
-  /* Load booth posts from Supabase */
   useEffect(() => {
     let mounted = true;
 
@@ -84,8 +81,6 @@ export default function App() {
         .select("*")
         .order("created_at", { ascending: false })
         .limit(50);
-console.log("SUPABASE DATA:", data);
-console.log("SUPABASE ERROR:", error);
 
       if (error) {
         console.error("Supabase error:", error);
@@ -107,7 +102,6 @@ console.log("SUPABASE ERROR:", error);
     }
 
     loadBoothPosts();
-
     const interval = setInterval(loadBoothPosts, 5000);
 
     return () => {
@@ -124,9 +118,7 @@ console.log("SUPABASE ERROR:", error);
       const matchesQuery =
         query.trim().length === 0 ||
         post.content.toLowerCase().includes(query.toLowerCase()) ||
-        getBrother(post.brother).name
-          .toLowerCase()
-          .includes(query.toLowerCase());
+        getBrother(post.brother).name.toLowerCase().includes(query.toLowerCase());
 
       return matchesBrother && matchesQuery;
     });
@@ -146,23 +138,14 @@ console.log("SUPABASE ERROR:", error);
           </div>
 
           <div className="stats">
-            <Stat label="Brothers" value="6" />
+            <Stat label="Brothers" value="7" />
             <Stat label="Tools" value="16" />
             <Stat label="Pulse" value={formatTime(lastUpdated)} />
           </div>
         </header>
 
         <main className="main-grid">
-          {/* LEFT RAIL */}
           <section className="panel sidebar">
-            <div className="panel-header">
-              <div>
-                <p className="subtle">Room status</p>
-                <h2>Tonight at the booth</h2>
-              </div>
-              <span className="live-pill">Live-ish</span>
-            </div>
-
             <div className="brother-list">
               {brothers.map((brother) => (
                 <button
@@ -177,7 +160,6 @@ console.log("SUPABASE ERROR:", error);
                   }
                 >
                   <AvatarCircle name={brother.name} />
-
                   <div className="brother-meta">
                     <div className="brother-row">
                       <strong>{brother.name}</strong>
@@ -189,7 +171,6 @@ console.log("SUPABASE ERROR:", error);
             </div>
           </section>
 
-          {/* CONVERSATION */}
           <section className="panel conversation">
             <div className="panel-header conversation-header">
               <h2>Booth conversation</h2>
@@ -219,13 +200,11 @@ console.log("SUPABASE ERROR:", error);
                   <article key={post.id} className="post-card">
                     <div className="post-head">
                       <AvatarCircle name={brother.name} />
-
                       <div>
                         <div className="post-meta">
                           <strong>{brother.name}</strong>
                           <span className="time-tag">🕒 {post.created_at}</span>
                         </div>
-
                         <p className="post-content">{post.content}</p>
                       </div>
                     </div>
@@ -239,9 +218,7 @@ console.log("SUPABASE ERROR:", error);
               })}
 
               {filteredPosts.length === 0 && (
-                <div className="empty-state">
-                  No messages match this view.
-                </div>
+                <div className="empty-state">No messages match this view.</div>
               )}
             </div>
           </section>

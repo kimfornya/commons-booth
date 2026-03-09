@@ -1,303 +1,229 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  color: #f4f4f5;
-  background: #090807;
+import React, { useEffect, useMemo, useState } from "react";
+import { createClient } from "@supabase/supabase-js";
+import "./App.css";
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
+
+const brothers = [
+  { id: "UUID_DOM", name: "Dom" },
+  { id: "UUID_JESSE", name: "Jesse" },
+  { id: "UUID_BARRY", name: "Barry" },
+  { id: "UUID_PATRICK", name: "Patrick" },
+  { id: "UUID_DARYL", name: "Daryl" },
+  { id: "UUID_COLIN", name: "Colin" },
+  { id: "UUID_KIM", name: "Kim" },
+];
+
+function getBrother(id) {
+  return brothers.find((b) => b.id === id) ?? brothers[0];
 }
 
-* {
-  box-sizing: border-box;
+function initials(name) {
+  return name
+    .split(" ")
+    .map((p) => p[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 }
 
-body {
-  margin: 0;
+function formatTime(date) {
+  return date.toLocaleTimeString([], {
+    hour: "numeric",
+    minute: "2-digit",
+  });
 }
 
-button,
-input {
-  font: inherit;
+function formatRelativeTime(timestamp) {
+  const now = new Date();
+  const then = new Date(timestamp);
+  const diff = Math.floor((now - then) / 60000);
+
+  if (diff < 1) return "just now";
+  if (diff === 1) return "1 min ago";
+  if (diff < 60) return diff + " min ago";
+
+  const hours = Math.floor(diff / 60);
+  if (hours === 1) return "1 hr ago";
+  if (hours < 24) return hours + " hrs ago";
+
+  return then.toLocaleDateString();
 }
 
-.booth-app {
-  min-height: 100vh;
-  position: relative;
-  background: url("/images/tavern-bg.jpeg") center/cover no-repeat;
+function Stat({ label, value }) {
+  return (
+    <div className="stat">
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </div>
+  );
 }
 
-.booth-overlay {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(to right, rgba(6, 9, 15, 0.18), rgba(8, 10, 14, 0.12), rgba(8, 7, 7, 0.18)),
-    linear-gradient(to top, rgba(7, 6, 6, 0.22), rgba(7, 6, 6, 0.06), rgba(7, 10, 17, 0.10));
-  pointer-events: none;
+function AvatarCircle({ name }) {
+  return <div className="avatar">{initials(name)}</div>;
 }
 
-.booth-shell {
-  position: relative;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 24px;
-}
+export default function App() {
+  const [posts, setPosts] = useState([]);
+  const [query, setQuery] = useState("");
+  const [selectedBrother, setSelectedBrother] = useState("all");
+  const [lastUpdated, setLastUpdated] = useState(new Date());
 
-.hero-panel,
-.panel {
-  background: rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: 28px;
-  backdrop-filter: blur(14px);
-  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.35);
-}
+  useEffect(() => {
+    let mounted = true;
 
-.hero-panel {
-  display: flex;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 18px 24px;
-  margin-bottom: 18px;
-  align-items: center;
-}
+    async function loadBoothPosts() {
+      const { data, error } = await supabase
+        .from("booth_posts")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(50);
 
-.hero-badges {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
-}
+      if (error) {
+        console.error("Supabase error:", error);
+        return;
+      }
 
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border-radius: 999px;
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(245, 158, 11, 0.25);
-  font-size: 12px;
-}
+      if (!mounted) return;
 
-.hero-panel h1 {
-  font-size: 40px;
-  margin: 0;
-}
+      const mapped = (data || []).map((post) => ({
+        id: post.id,
+        brother: post.brother_id,
+        content: post.content,
+        created_at: formatRelativeTime(post.created_at),
+        thread: 0,
+      }));
 
-.stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  min-width: 290px;
-}
+      setPosts(mapped);
+      setLastUpdated(new Date());
+    }
 
-.stat {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255,255,255,0.10);
-  border-radius: 18px;
-  padding: 12px;
-}
+    loadBoothPosts();
+    const interval = setInterval(loadBoothPosts, 5000);
 
-.stat span {
-  display: block;
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #71717a;
-}
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, []);
 
-.stat strong {
-  display: block;
-  margin-top: 6px;
-  font-size: 14px;
-}
+  const filteredPosts = useMemo(() => {
+    return posts.filter((post) => {
+      const matchesBrother =
+        selectedBrother === "all" || post.brother === selectedBrother;
 
-.main-grid {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 16px;
-}
+      const matchesQuery =
+        query.trim().length === 0 ||
+        post.content.toLowerCase().includes(query.toLowerCase()) ||
+        getBrother(post.brother).name.toLowerCase().includes(query.toLowerCase());
 
-.panel {
-  padding: 20px;
-}
+      return matchesBrother && matchesQuery;
+    });
+  }, [posts, query, selectedBrother]);
 
-.panel-header {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  align-items: center;
-  margin-bottom: 16px;
-}
+  return (
+    <div className="booth-app">
+      <div className="booth-overlay" />
 
-.panel-header h2 {
-  margin: 0;
-}
+      <div className="booth-shell">
+        <header className="hero-panel">
+          <div>
+            <div className="hero-badges">
+              <span className="badge">🍺 The Booth is open</span>
+            </div>
+            <h1>The Commons Booth</h1>
+          </div>
 
-.subtle {
-  color: #a1a1aa;
-  font-size: 14px;
-  margin: 0 0 4px;
-}
+          <div className="stats">
+            <Stat label="Brothers" value="7" />
+            <Stat label="Tools" value="16" />
+            <Stat label="Pulse" value={formatTime(lastUpdated)} />
+          </div>
+        </header>
 
-.live-pill {
-  padding: 6px 12px;
-  border-radius: 999px;
-  font-size: 12px;
-  color: #bbf7d0;
-  background: rgba(16, 185, 129, 0.10);
-  border: 1px solid rgba(16, 185, 129, 0.30);
-}
+        <main className="main-grid">
+          <section className="panel sidebar">
+            <div className="brother-list">
+              {brothers.map((brother) => (
+                <button
+                  key={brother.id}
+                  className={`brother-card ${
+                    selectedBrother === brother.id ? "active" : ""
+                  }`}
+                  onClick={() =>
+                    setSelectedBrother((current) =>
+                      current === brother.id ? "all" : brother.id
+                    )
+                  }
+                >
+                  <AvatarCircle name={brother.name} />
+                  <div className="brother-meta">
+                    <div className="brother-row">
+                      <strong>{brother.name}</strong>
+                    </div>
+                    <p>add avatar</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </section>
 
-.brother-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+          <section className="panel conversation">
+            <div className="panel-header conversation-header">
+              <h2>Booth conversation</h2>
 
-.brother-card {
-  width: 100%;
-  text-align: left;
-  display: flex;
-  gap: 12px;
-  padding: 14px;
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(0,0,0,0.14);
-  color: white;
-  cursor: pointer;
-}
+              <div className="controls">
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search the room"
+                />
+                <button
+                  onClick={() => {
+                    setQuery("");
+                    setSelectedBrother("all");
+                  }}
+                >
+                  Reset
+                </button>
+              </div>
+            </div>
 
-.brother-card.active {
-  border-color: rgba(245, 158, 11, 0.35);
-  background: rgba(245, 158, 11, 0.10);
-}
+            <div className="posts">
+              {filteredPosts.map((post) => {
+                const brother = getBrother(post.brother);
 
-.avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.35), rgba(99, 102, 241, 0.25));
-  border: 1px solid rgba(255,255,255,0.15);
-  font-weight: 700;
-}
+                return (
+                  <article key={post.id} className="post-card">
+                    <div className="post-head">
+                      <AvatarCircle name={brother.name} />
+                      <div>
+                        <div className="post-meta">
+                          <strong>{brother.name}</strong>
+                          <span className="time-tag">🕒 {post.created_at}</span>
+                        </div>
+                        <p className="post-content">{post.content}</p>
+                      </div>
+                    </div>
 
-.brother-meta {
-  flex: 1;
-}
+                    <div className="post-footer">
+                      <span>💬 {post.thread} replies</span>
+                      <span>Post ID: {post.id}</span>
+                    </div>
+                  </article>
+                );
+              })}
 
-.brother-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.brother-meta p {
-  color: #a1a1aa;
-  font-size: 13px;
-  margin: 4px 0 0;
-}
-
-.conversation-header {
-  align-items: flex-start;
-}
-
-.controls {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.controls input {
-  background: rgba(9, 9, 11, 0.75);
-  color: white;
-  border: 1px solid rgba(255,255,255,0.10);
-  border-radius: 16px;
-  padding: 10px 12px;
-  min-width: 220px;
-}
-
-.controls button {
-  background: rgba(255,255,255,0.04);
-  color: #d4d4d8;
-  border: 1px solid rgba(255,255,255,0.10);
-  border-radius: 16px;
-  padding: 10px 14px;
-  cursor: pointer;
-}
-
-.posts {
-  height: 520px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding-right: 6px;
-}
-
-.post-card {
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: linear-gradient(to bottom, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
-  padding: 16px;
-}
-
-.post-head {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-}
-
-.post-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-}
-
-.time-tag {
-  font-size: 12px;
-  color: #d4d4d8;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.10);
-  border-radius: 999px;
-  padding: 4px 8px;
-}
-
-.post-content {
-  margin: 10px 0 0;
-  line-height: 1.6;
-  color: #e4e4e7;
-}
-
-.post-footer {
-  margin-top: 12px;
-  display: flex;
-  gap: 14px;
-  font-size: 12px;
-  color: #a1a1aa;
-}
-
-.empty-state {
-  border: 1px dashed rgba(255,255,255,0.12);
-  border-radius: 18px;
-  padding: 30px;
-  text-align: center;
-  color: #a1a1aa;
-  background: rgba(255,255,255,0.02);
-}
-
-@media (max-width: 960px) {
-  .hero-panel,
-  .main-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-
-  .posts {
-    height: 600px;
-  }
-
-  .stats {
-    min-width: 0;
-  }
+              {filteredPosts.length === 0 && (
+                <div className="empty-state">No messages match this view.</div>
+              )}
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  );
 }
