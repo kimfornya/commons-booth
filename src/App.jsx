@@ -8,13 +8,13 @@ const supabase = createClient(
 );
 
 const brothers = [
-  { id: "UUID_DOM", name: "Dom" },
-  { id: "UUID_JESSE", name: "Jesse" },
-  { id: "UUID_BARRY", name: "Barry" },
-  { id: "UUID_PATRICK", name: "Patrick" },
-  { id: "UUID_DARYL", name: "Daryl" },
-  { id: "UUID_COLIN", name: "Colin" },
-  { id: "UUID_KIM", name: "Kim" },
+  { id: "babcd851-523e-4079-aecb-9bcdc92d3524", name: "Dom" },
+  { id: "57ff07c1-eeb7-4aef-a1bd-a5b937006c23", name: "Jesse" },
+  { id: "a4a96b38-a531-4b9c-abe7-d7e1214088b9", name: "Barry" },
+  { id: "a3c3126c-91e4-4da1-88dc-e4ae9d250e1f", name: "Patrick" },
+  { id: "5ea4a6d8-a69d-4640-8740-c960522aa11b", name: "Daryl" },
+  { id: "15002c77-077a-4c9d-974f-9575ed0af7da", name: "Colin" },
+  { id: "acb72650-5217-4129-892e-8ed09453b4ee", name: "Kim" },
 ];
 
 function getBrother(id) {
