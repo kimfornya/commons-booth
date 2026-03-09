@@ -6,28 +6,46 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
-
 const brothers = [
-  { id: "babcd851-523e-4079-aecb-9bcdc92d3524", name: "Dom" },
-  { id: "57ff07c1-eeb7-4aef-a1bd-a5b937006c23", name: "Jesse" },
-  { id: "a4a96b38-a531-4b9c-abe7-d7e1214088b9", name: "Barry" },
-  { id: "a3c3126c-91e4-4da1-88dc-e4ae9d250e1f", name: "Patrick" },
-  { id: "5ea4a6d8-a69d-4640-8740-c960522aa11b", name: "Daryl" },
-  { id: "15002c77-077a-4c9d-974f-9575ed0af7da", name: "Colin" },
-  { id: "acb72650-5217-4129-892e-8ed09453b4ee", name: "Kim" },
+  {
+    id: "babcd851-523e-4079-aecb-9bcdc92d3524",
+    name: "Dom",
+    avatar: "/images/dom.jpg",
+  },
+  {
+    id: "57ff07c1-eeb7-4aef-a1bd-a5b937006c23",
+    name: "Jesse",
+    avatar: "/images/jesse.jpg",
+  },
+  {
+    id: "a4a96b38-a531-4b9c-abe7-d7e1214088b9",
+    name: "Barry",
+    avatar: "/images/barry.jpg",
+  },
+  {
+    id: "a3c3126c-91e4-4da1-88dc-e4ae9d250e1f",
+    name: "Patrick",
+    avatar: "/images/patrick.jpg",
+  },
+  {
+    id: "5ea4a6d8-a69d-4640-8740-c960522aa11b",
+    name: "Daryl",
+    avatar: "/images/daryl.jpg",
+  },
+  {
+    id: "15002c77-077a-4c9d-974f-9575ed0af7da",
+    name: "Colin",
+    avatar: "/images/colin.jpg",
+  },
+  {
+    id: "acb72650-5217-4129-892e-8ed09453b4ee",
+    name: "Kim",
+    avatar: "/images/kim.jpg",
+  },
 ];
 
 function getBrother(id) {
   return brothers.find((b) => b.id === id) ?? brothers[0];
-}
-
-function initials(name) {
-  return name
-    .split(" ")
-    .map((p) => p[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
 }
 
 function formatTime(date) {
@@ -62,8 +80,14 @@ function Stat({ label, value }) {
   );
 }
 
-function AvatarCircle({ name }) {
-  return <div className="avatar">{initials(name)}</div>;
+function AvatarCircle({ brother }) {
+  return (
+    <img
+      src={brother.avatar}
+      alt={brother.name}
+      className="avatar"
+    />
+  );
 }
 
 export default function App() {
@@ -159,12 +183,11 @@ export default function App() {
                     )
                   }
                 >
-                  <AvatarCircle name={brother.name} />
+                  <AvatarCircle brother={brother} />
                   <div className="brother-meta">
                     <div className="brother-row">
                       <strong>{brother.name}</strong>
                     </div>
-                    <p>add avatar</p>
                   </div>
                 </button>
               ))}
@@ -199,7 +222,7 @@ export default function App() {
                 return (
                   <article key={post.id} className="post-card">
                     <div className="post-head">
-                      <AvatarCircle name={brother.name} />
+                      <AvatarCircle brother={brother} />
                       <div>
                         <div className="post-meta">
                           <strong>{brother.name}</strong>
