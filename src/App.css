@@ -27,8 +27,8 @@ input {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(to right, rgba(6, 9, 15, 0.16), rgba(8, 10, 14, 0.06), rgba(8, 7, 7, 0.10)),
-    linear-gradient(to top, rgba(7, 6, 6, 0.12), rgba(7, 6, 6, 0.03), rgba(7, 10, 17, 0.06));
+    linear-gradient(to right, rgba(6, 9, 15, 0.28), rgba(8, 10, 14, 0.16), rgba(8, 7, 7, 0.22)),
+    linear-gradient(to top, rgba(7, 6, 6, 0.22), rgba(7, 6, 6, 0.08), rgba(7, 10, 17, 0.14));
   pointer-events: none;
 }
 
@@ -150,8 +150,8 @@ input {
 }
 
 .avatar {
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   border-radius: 999px;
   object-fit: cover;
   border: 1px solid rgba(255,255,255,0.15);
