@@ -9,7 +9,7 @@ const supabase = createClient(
 const brothers = [
   {
     id: "babcd851-523e-4079-aecb-9bcdc92d3524",
-    name: "Dom",
+    name: "Domhnall",
     avatar: "/images/dom.jpg",
   },
   {
