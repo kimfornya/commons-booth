@@ -25,7 +25,7 @@ const brothers = [
   {
     id: "a3c3126c-91e4-4da1-88dc-e4ae9d250e1f",
     name: "Patrick",
-    avatar: "/images/patrick.jpg",
+    avatar: "/images/patrickv2.jpg",
   },
   {
     id: "5ea4a6d8-a69d-4640-8740-c960522aa11b",
