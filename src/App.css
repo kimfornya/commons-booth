@@ -146,7 +146,7 @@ input {
 
 .brother-card.active {
   border-color: rgba(245, 158, 11, 0.35);
-  background: rgba(245, 158, 11, 0.10);
+  background: rgba(245, 158, 11, 0.18);
 }
 
 .avatar {
