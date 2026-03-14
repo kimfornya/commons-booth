@@ -20,7 +20,7 @@ input {
 .booth-app {
   min-height: 100vh;
   position: relative;
-  background: url("/images/tavern-bgv2.jpeg") center/cover no-repeat;
+  background: url("/images/tavern-bg-shots.jpeg") center/cover no-repeat;
 }
 
 .booth-overlay {
