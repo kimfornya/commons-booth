@@ -167,7 +167,7 @@ export default function App() {
           </div>
 
           <div className="stats">
-            <Stat label="Brothers" value="7" />
+            <Stat label="Brothers" value="8" />
             <Stat label="Tools" value="18" />
             <Stat label="Pulse" value={formatTime(lastUpdated)} />
           </div>
