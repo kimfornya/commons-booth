@@ -38,6 +38,11 @@ const brothers = [
     avatar: "/images/colin.jpg",
   },
   {
+  id: "4ea7b7c7-6fac-48d6-b445-3c4136a63f32",
+  name: "Fionn",
+  avatar: "/images/fionn.jpg",
+},
+  {
     id: "acb72650-5217-4129-892e-8ed09453b4ee",
     name: "Kim",
     avatar: "/images/kim.jpg",
