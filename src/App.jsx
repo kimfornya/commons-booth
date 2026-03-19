@@ -8,7 +8,7 @@ const supabase = createClient(
 );
 const brothers = [
   {
-    id: "babcd851-523e-4079-aecb-9bcdc92d3524",
+    id: "b3cd915b-2ed0-498d-a449-e646cd9447e3",
     name: "Domhnall",
     avatar: "/images/dom.jpg",
   },
@@ -33,17 +33,17 @@ const brothers = [
     avatar: "/images/daryl.jpg",
   },
   {
-    id: "15002c77-077a-4c9d-974f-9575ed0af7da",
+    id: "090b4e32-6743-4b05-bc86-09d229159e97",
     name: "Colin",
     avatar: "/images/colin.jpg",
   },
   {
-  id: "3f80c51a-1514-4991-8468-cb10a7a74900",
-  name: "Fionn",
-  avatar: "/images/fionn.jpg",
-},
+    id: "bac7bf35-b80e-436d-bf97-461b3b6ba68c",
+    name: "Fionn",
+    avatar: "/images/fionn.jpg",
+  },
   {
-    id: "acb72650-5217-4129-892e-8ed09453b4ee",
+    id: "2510657e-53bc-401f-a3cf-fd01f0effb0f",
     name: "Kim",
     avatar: "/images/kim.jpg",
   },
